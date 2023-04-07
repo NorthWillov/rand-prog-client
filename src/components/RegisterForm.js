@@ -24,7 +24,7 @@ const RegisterForm = () => {
 
     const configuration = {
       method: "post",
-      url: "https://rand-prog-server.onrender.com/register",
+      url: "http://localhost:5000/register",
       data: {
         email,
         password,

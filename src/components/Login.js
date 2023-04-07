@@ -51,7 +51,7 @@ const Login = () => {
 
     const configuration = {
       method: "post",
-      url: "https://rand-prog-server.onrender.com/login",
+      url: "http://localhost:5000/login",
       data: {
         email,
         password,
@@ -82,11 +82,11 @@ const Login = () => {
   return (
     <LoginWrapper>
       <Typography variant="h4" align="center" gutterBottom>
-        Login
+        Увійти
       </Typography>
       <LoginForm onSubmit={handleSubmit}>
         <TextField
-          label="Email"
+          label="Поштова скринька"
           variant="outlined"
           margin="normal"
           type="email"
@@ -95,7 +95,7 @@ const Login = () => {
           required
         />
         <TextField
-          label="Password"
+          label="Пароль"
           variant="outlined"
           margin="normal"
           type="password"
@@ -104,7 +104,7 @@ const Login = () => {
           required
         />
         <LoginButton variant="contained" color="primary" type="submit">
-          Login
+          Логін
         </LoginButton>
       </LoginForm>
     </LoginWrapper>

@@ -1,20 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const Program = ({ prog, editMode, handleProgramDelete }) => {
+const Program = ({
+  prog,
+  editMode,
+  handleProgramDelete,
+  handleProgramEdit,
+  categories,
+}) => {
+  const [color, setColor] = useState("#000");
+
+  useEffect(() => {
+    categories.forEach((cat) => {
+      if (cat.name === prog.category) {
+        setColor(cat.color);
+      }
+    });
+  }, []);
+
   const handleDelete = () => {
-    handleProgramDelete(prog)
+    handleProgramDelete(prog);
+  };
+
+  const handleEdit = () => {
+    handleProgramEdit(prog);
   };
 
   return (
-    <div className="program" style={{ border: `6px solid red` }}>
+    <div className="program" style={{ border: `6px solid ${color}` }}>
       <div className="prog-header">
-        {editMode && <button className="edit-btn">EDIT</button>}
+        {editMode && (
+          <button onClick={handleEdit} className="edit-btn">
+            РЕД
+          </button>
+        )}
         <p>
           {prog.duration.minutes}:{prog.duration.seconds}
         </p>
         {editMode && (
           <button onClick={handleDelete} className="delete-btn">
-            DELETE
+            ВИД
           </button>
         )}
       </div>
