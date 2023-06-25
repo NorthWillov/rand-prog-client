@@ -9,6 +9,7 @@ import DeleteCategoryModal from "./DeleteCategoryModal";
 import XmlForm from "./XmlForm";
 import Program from "./Program";
 import ModalXmlForm from "./ModalXmlForm";
+import baseURL from "../apiConfig";
 const cookies = new Cookies();
 
 const Dashboard = () => {
@@ -34,7 +35,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get("http://localhost:5001/fetch-palette", {
+        const res = await axios.get(`${baseURL}/fetch-palette`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("RES:", res);
@@ -52,7 +53,7 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post("http://localhost:5001/logout");
+      const response = await axios.post(`${baseURL}/logout`);
       if (response.data.success) {
         cookies.remove("TOKEN");
         navigate("/");
@@ -69,7 +70,7 @@ const Dashboard = () => {
   const handleProgramDelete = async (prog) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5001/${palette._id}/programs/${prog._id}`,
+        `${baseURL}/${palette._id}/programs/${prog._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -95,7 +96,7 @@ const Dashboard = () => {
   const handleProgramEditSubmit = async (updProg) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5001`,
+        baseURL,
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -124,7 +125,7 @@ const Dashboard = () => {
   const handleCategorySubmit = async (newCategory) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5001`,
+        baseURL,
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -143,7 +144,7 @@ const Dashboard = () => {
   const handleInsert = async (newProg) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5001`,
+        baseURL,
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -161,7 +162,7 @@ const Dashboard = () => {
   const handleCategoryDelete = async (categoryId) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5001`,
+        baseURL,
         headers: { Authorization: `Bearer ${token}` },
       });
 

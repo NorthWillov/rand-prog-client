@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import baseURL from "../apiConfig";
 import axios from "axios";
 import Loader from "./Loader";
 
@@ -24,7 +25,7 @@ const RegisterForm = () => {
 
     const configuration = {
       method: "post",
-      url: "http://localhost:5001/register",
+      url: `${baseURL}/register`,
       data: {
         email,
         password,
