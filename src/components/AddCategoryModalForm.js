@@ -34,12 +34,12 @@ const CategoryModal = ({ open, handleClose, handleSave }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Створити Нову Категорію</DialogTitle>
+      <DialogTitle>Create New Category</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
-          label="Назва Категорії"
+          label="Category Name"
           fullWidth
           value={name}
           onChange={handleNameChange}

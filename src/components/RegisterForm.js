@@ -24,7 +24,7 @@ const RegisterForm = () => {
 
     const configuration = {
       method: "post",
-      url: "http://localhost:5000/register",
+      url: "http://localhost:5001/register",
       data: {
         email,
         password,

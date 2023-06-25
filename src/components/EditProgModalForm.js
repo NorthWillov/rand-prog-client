@@ -12,17 +12,27 @@ import {
   MenuItem,
 } from "@mui/material";
 
-const EditProgModalForm = ({ open, handleClose, handleSubmit, editInputs }) => {
+const EditProgModalForm = ({
+  open,
+  handleClose,
+  handleSubmit,
+  editInputs,
+  categories,
+}) => {
   const [filename, setFilename] = useState("");
   const [durationMinutes, setDurationMinutes] = useState(0);
   const [durationSeconds, setDurationSeconds] = useState(0);
   const [category, setCategory] = useState("");
+  const [info, setInfo] = useState("");
+
+  console.log(editInputs);
 
   useEffect(() => {
     setFilename(editInputs.fn);
     setDurationMinutes(editInputs.dur.minutes);
     setDurationSeconds(editInputs.dur.seconds);
     setCategory(editInputs.cat);
+    setInfo(editInputs.info);
   }, []);
 
   const handleFormSubmit = (e) => {
@@ -33,32 +43,43 @@ const EditProgModalForm = ({ open, handleClose, handleSubmit, editInputs }) => {
       filename,
       duration,
       category,
+      info,
     });
     setFilename("");
     setDurationMinutes(0);
     setDurationSeconds(0);
     setCategory("");
+    setInfo("");
     handleClose();
   };
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Редагувати Файл</DialogTitle>
+      <DialogTitle>Edit File</DialogTitle>
       <DialogContent>
         <form onSubmit={handleFormSubmit}>
           <TextField
             autoFocus
             margin="dense"
-            label="Назва Файлу"
+            label="Name"
             type="text"
             value={filename}
             onChange={(e) => setFilename(e.target.value)}
             fullWidth
           />
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Info"
+            type="text"
+            value={info}
+            onChange={(e) => setInfo(e.target.value)}
+            fullWidth
+          />
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <TextField
               margin="dense"
-              label="Тривалість (хвилини)"
+              label="Duration (minutes)"
               type="number"
               value={durationMinutes}
               onChange={(e) => setDurationMinutes(e.target.value)}
@@ -66,7 +87,7 @@ const EditProgModalForm = ({ open, handleClose, handleSubmit, editInputs }) => {
             />
             <TextField
               margin="dense"
-              label="Тривалість (секунди)"
+              label="Duration (seconds)"
               type="number"
               value={durationSeconds}
               onChange={(e) => setDurationSeconds(e.target.value)}
@@ -74,16 +95,17 @@ const EditProgModalForm = ({ open, handleClose, handleSubmit, editInputs }) => {
             />
           </div>
           <FormControl fullWidth>
-            <InputLabel>Категорія</InputLabel>
+            <InputLabel>Category</InputLabel>
             <Select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               fullWidth
             >
-              <MenuItem value="News">News</MenuItem>
-              <MenuItem value="Sports">Sports</MenuItem>
-              <MenuItem value="Entertainment">Entertainment</MenuItem>
-              <MenuItem value="Documentary">Documentary</MenuItem>
+              {categories.map((cat) => (
+                <MenuItem key={cat.name} value={cat.name}>
+                  {cat.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <DialogActions>

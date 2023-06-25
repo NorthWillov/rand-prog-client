@@ -5,7 +5,10 @@ import Cookies from "universal-cookie";
 import AddProgModalForm from "./AddProgModalForm";
 import EditProgModalForm from "./EditProgModalForm";
 import CategoryModal from "./AddCategoryModalForm";
+import DeleteCategoryModal from "./DeleteCategoryModal";
+import XmlForm from "./XmlForm";
 import Program from "./Program";
+import ModalXmlForm from "./ModalXmlForm";
 const cookies = new Cookies();
 
 const Dashboard = () => {
@@ -14,11 +17,15 @@ const Dashboard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isCategoryDeleteModalOpen, setIsCategoryDeleteModalOpen] =
+    useState(false);
+  const [isModalXmlForm, setIsModalXmlForm] = useState(false);
   const [editInputs, setEditInputs] = useState({
     id: "",
     fn: "",
     dur: { minutes: 0, seconds: 0 },
     category: "",
+    info: "",
   });
 
   const token = cookies.get("TOKEN");
@@ -27,7 +34,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/fetch-palette", {
+        const res = await axios.get("http://localhost:5001/fetch-palette", {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("RES:", res);
@@ -45,7 +52,7 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/logout");
+      const response = await axios.post("http://localhost:5001/logout");
       if (response.data.success) {
         cookies.remove("TOKEN");
         navigate("/");
@@ -62,7 +69,7 @@ const Dashboard = () => {
   const handleProgramDelete = async (prog) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/${palette._id}/programs/${prog._id}`,
+        `http://localhost:5001/${palette._id}/programs/${prog._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -81,13 +88,14 @@ const Dashboard = () => {
       fn: prog.filename,
       dur: { minutes: prog.duration.minutes, seconds: prog.duration.seconds },
       cat: prog.category,
+      info: prog.info,
     });
   };
 
   const handleProgramEditSubmit = async (updProg) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5000`,
+        baseURL: `http://localhost:5001`,
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -102,6 +110,7 @@ const Dashboard = () => {
             filename: updProg.filename,
             duration: updProg.duration,
             category: updProg.category,
+            info: updProg.info,
           };
         }
         return p;
@@ -115,12 +124,16 @@ const Dashboard = () => {
   const handleCategorySubmit = async (newCategory) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5000`,
+        baseURL: `http://localhost:5001`,
         headers: { Authorization: `Bearer ${token}` },
       });
 
       await axiosInstance.post(`/${palette._id}/insert-new-category`, {
         newCategory,
+      });
+      setPalette({
+        ...palette,
+        categories: [...palette.categories, newCategory],
       });
     } catch (error) {
       console.log(error);
@@ -130,14 +143,34 @@ const Dashboard = () => {
   const handleInsert = async (newProg) => {
     try {
       const axiosInstance = axios.create({
-        baseURL: `http://localhost:5000`,
+        baseURL: `http://localhost:5001`,
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      await axiosInstance.post(`/${palette._id}/programs`, { newProg });
+      const res = await axiosInstance.post(`/${palette._id}/programs`, {
+        newProg,
+      });
 
-      const updatedProgs = [...palette.tvPrograms, newProg];
-      setPalette({ ...palette, tvPrograms: updatedProgs });
+      setPalette(res.data);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCategoryDelete = async (categoryId) => {
+    try {
+      const axiosInstance = axios.create({
+        baseURL: `http://localhost:5001`,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const res = await axiosInstance.delete(
+        `/${palette._id}/delete-category/${categoryId}`
+      );
+
+      setPalette(res.data);
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -149,6 +182,14 @@ const Dashboard = () => {
 
   const handleCategoryModalClose = () => {
     setIsCategoryModalOpen(false);
+  };
+
+  const handleCategoryDeleteModalOpen = () => {
+    setIsCategoryDeleteModalOpen(true);
+  };
+
+  const handleCategoryDeleteModalClose = () => {
+    setIsCategoryDeleteModalOpen(false);
   };
 
   const handleAddModalOpen = () => {
@@ -170,6 +211,7 @@ const Dashboard = () => {
       fn: "",
       dur: { minutes: 0, seconds: 0 },
       category: "",
+      info: "",
     });
   };
 
@@ -177,16 +219,18 @@ const Dashboard = () => {
     <>
       {palette.tvPrograms.length > 0 && (
         <div className="programs">
-          {palette.tvPrograms.map((prog) => (
-            <Program
-              key={prog.filename}
-              prog={prog}
-              categories={palette.categories}
-              editMode={editMode}
-              handleProgramDelete={handleProgramDelete}
-              handleProgramEdit={handleProgramEdit}
-            />
-          ))}
+          {palette.tvPrograms
+            .sort((a, b) => a.category.localeCompare(b.category))
+            .map((prog) => (
+              <Program
+                key={prog.filename}
+                prog={prog}
+                categories={palette.categories}
+                editMode={editMode}
+                handleProgramDelete={handleProgramDelete}
+                handleProgramEdit={handleProgramEdit}
+              />
+            ))}
         </div>
       )}
       <AddProgModalForm
@@ -201,6 +245,7 @@ const Dashboard = () => {
           handleClose={handleEditModalClose}
           handleSubmit={handleProgramEditSubmit}
           editInputs={editInputs}
+          categories={palette.categories}
         />
       )}
       <CategoryModal
@@ -208,10 +253,34 @@ const Dashboard = () => {
         handleClose={handleCategoryModalClose}
         handleSave={handleCategorySubmit}
       />
-      <button onClick={handleLogout}>Вийти</button>
-      <button onClick={handleEdit}>Редагувати</button>
-      <button onClick={handleAddModalOpen}>Додати</button>
-      <button onClick={handleCategoryModalOpen}>Додати Нову Категорію</button>
+      <DeleteCategoryModal
+        tvPrograms={palette.tvPrograms}
+        open={isCategoryDeleteModalOpen}
+        handleClose={handleCategoryDeleteModalClose}
+        handleCategoryDelete={handleCategoryDelete}
+        categories={palette.categories}
+      />
+      <div className="main-menu-btns">
+        <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleEdit}>Edit</button>
+        <button onClick={handleAddModalOpen}>Add file</button>
+        <button onClick={handleCategoryModalOpen}>Create new category</button>
+        <button onClick={handleCategoryDeleteModalOpen}>Delete category</button>
+      </div>
+
+      <div className="rest">
+        <XmlForm setPalette={setPalette} palette={palette} />
+        <button
+          onClick={() => setIsModalXmlForm(!isAddModalOpen)}
+          className="glow"
+          type="button"
+        >
+          Tryb rozszerzony
+        </button>
+        {isModalXmlForm && (
+          <ModalXmlForm setIsModalXmlForm={setIsModalXmlForm} />
+        )}
+      </div>
     </>
   );
 };
