@@ -26,7 +26,7 @@ const CategoryModal = ({ open, handleClose, handleSave }) => {
   };
 
   const handleConfirm = () => {
-    handleSave({ name, color });
+    handleSave({ name: name.trim(), color });
     setName("");
     setColor("#000000");
     handleClose();

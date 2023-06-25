@@ -40,7 +40,7 @@ const EditProgModalForm = ({
     const duration = { minutes: durationMinutes, seconds: durationSeconds };
     handleSubmit({
       id: editInputs.id,
-      filename,
+      filename: filename.trim(),
       duration,
       category,
       info,
