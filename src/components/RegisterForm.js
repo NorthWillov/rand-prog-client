@@ -1,15 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { styled } from "@mui/system";
 import baseURL from "../apiConfig";
 import axios from "axios";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
+
+const RegisterWrapper = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: "100vh",
+});
+
+const RegisterFormContainer = styled("form")({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+  maxWidth: "400px",
+  padding: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "5px",
+});
+
+const RegisterButton = styled(Button)({
+  margin: "1rem 0",
+});
 
 const RegisterForm = () => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [registered, setRegistered] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -36,7 +61,7 @@ const RegisterForm = () => {
     try {
       const res = await axios(configuration);
       setIsLoading(false);
-      setRegistered(true);
+      navigate("/dashboard");
     } catch (err) {
       console.log(err);
       setIsLoading(false);
@@ -47,30 +72,52 @@ const RegisterForm = () => {
     return <Loader />;
   }
 
+  const handleLogin = () => {
+    navigate("/");
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <TextField
-        label="Email"
-        type="email"
-        variant="outlined"
-        margin="normal"
-        fullWidth
-        value={email}
-        onChange={handleEmailChange}
-      />
-      <TextField
-        label="Password"
-        type="password"
-        variant="outlined"
-        margin="normal"
-        fullWidth
-        value={password}
-        onChange={handlePasswordChange}
-      />
-      <Button type="submit" variant="contained" color="primary">
+    <RegisterWrapper>
+      <Typography variant="h4" align="center" gutterBottom>
         Register
-      </Button>
-    </form>
+      </Typography>
+      <RegisterFormContainer onSubmit={handleSubmit}>
+        <TextField
+          label="Email"
+          variant="outlined"
+          margin="normal"
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          required
+        />
+        <TextField
+          label="Password"
+          variant="outlined"
+          margin="normal"
+          type="password"
+          value={password}
+          onChange={handlePasswordChange}
+          required
+        />
+        <RegisterButton
+          fullWidth
+          variant="contained"
+          color="primary"
+          type="submit"
+        >
+          Register
+        </RegisterButton>
+        <RegisterButton
+          fullWidth
+          variant="outlined"
+          color="primary"
+          onClick={handleLogin}
+        >
+          Login
+        </RegisterButton>
+      </RegisterFormContainer>
+    </RegisterWrapper>
   );
 };
 

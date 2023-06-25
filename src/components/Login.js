@@ -76,6 +76,10 @@ const Login = () => {
     }
   };
 
+  const handleRegister = () => {
+    navigate("/register");
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -83,11 +87,11 @@ const Login = () => {
   return (
     <LoginWrapper>
       <Typography variant="h4" align="center" gutterBottom>
-        Увійти
+        Login
       </Typography>
       <LoginForm onSubmit={handleSubmit}>
         <TextField
-          label="Поштова скринька"
+          label="Email"
           variant="outlined"
           margin="normal"
           type="email"
@@ -96,7 +100,7 @@ const Login = () => {
           required
         />
         <TextField
-          label="Пароль"
+          label="Password"
           variant="outlined"
           margin="normal"
           type="password"
@@ -104,8 +108,21 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <LoginButton variant="contained" color="primary" type="submit">
-          Логін
+        <LoginButton
+          fullWidth
+          variant="contained"
+          color="primary"
+          type="submit"
+        >
+          Login
+        </LoginButton>
+        <LoginButton
+          fullWidth
+          variant="outlined"
+          color="primary"
+          onClick={handleRegister}
+        >
+          Register
         </LoginButton>
       </LoginForm>
     </LoginWrapper>
