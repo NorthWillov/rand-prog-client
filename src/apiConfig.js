@@ -1,4 +1,8 @@
-const baseURL =
-  process.env.NODE_ENV === "development" ? "http://localhost:5001" : "";
+const isDevelopment = process.env.NODE_ENV === "development";
+const baseURL = isDevelopment
+  ? "http://localhost:5001"
+  : isDevelopment
+  ? ""
+  : "";
 
 export default baseURL;

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { styled } from "@mui/system";
 import { Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import baseURL from "../apiConfig";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import Loader from "./Loader";
@@ -51,7 +52,7 @@ const Login = () => {
 
     const configuration = {
       method: "post",
-      url: "http://localhost:5001/login",
+      url: `${baseURL}/login`,
       data: {
         email,
         password,
