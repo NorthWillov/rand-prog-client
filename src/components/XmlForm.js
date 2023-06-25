@@ -6,6 +6,7 @@ function XmlForm({ palette, setPalette }) {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [filesCount, setFilesCount] = useState({});
+  const [foundedExpiredProgs, setFoundedExpiredProgs] = useState([]);
   const [warnings, setWarnings] = useState([]);
 
   const changeHandler = (event) => {
@@ -41,12 +42,14 @@ function XmlForm({ palette, setPalette }) {
             });
           }
           // Check if program is expired and it should not be on the playlist
-          // if (
-          //   oldProgsDb.includes(prog.children[1].value.toUpperCase()) &&
-          //   !passedOldProgs.includes(prog.children[1].value.toUpperCase())
-          // ) {
-          //   passedOldProgs.push(prog.children[1].value.toUpperCase());
-          // }
+          if (
+            palette.unusedProgs?.includes(
+              prog.children[1].value.toUpperCase()
+            ) &&
+            !passedOldProgs.includes(prog.children[1].value.toUpperCase())
+          ) {
+            passedOldProgs.push(prog.children[1].value.toUpperCase());
+          }
 
           // Calculating miliseconds from files
           const ms =
@@ -73,7 +76,7 @@ function XmlForm({ palette, setPalette }) {
           {}
         );
       setWarnings(newWarnings);
-      // setFoundedExpiredProgs(passedOldProgs);
+      setFoundedExpiredProgs(passedOldProgs);
       setFilesCount(counts);
 
       // isTestFilesTimesChecked
@@ -139,7 +142,7 @@ function XmlForm({ palette, setPalette }) {
           </ul>
         </div>
       )}
-      {/* {foundedExpiredProgs.length !== 0 && (
+      {foundedExpiredProgs.length !== 0 && (
         <div>
           <ul>
             {foundedExpiredProgs.map((prog, idx) => (
@@ -150,7 +153,7 @@ function XmlForm({ palette, setPalette }) {
             ))}
           </ul>
         </div>
-      )} */}
+      )}
       <div className="xmlUploadForm">
         <input
           className="custom-file-upload"

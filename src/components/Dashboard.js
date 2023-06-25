@@ -5,6 +5,7 @@ import Cookies from "universal-cookie";
 import AddProgModalForm from "./AddProgModalForm";
 import EditProgModalForm from "./EditProgModalForm";
 import CategoryModal from "./AddCategoryModalForm";
+import AddUnusedProgramsModal from "./AddUnusedProgramsModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 import XmlForm from "./XmlForm";
 import Program from "./Program";
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isUnusedProgramsOpen, setIsUnusedProgramsOpen] = useState(false);
   const [isCategoryDeleteModalOpen, setIsCategoryDeleteModalOpen] =
     useState(false);
   const [isModalXmlForm, setIsModalXmlForm] = useState(false);
@@ -177,6 +179,24 @@ const Dashboard = () => {
     }
   };
 
+  const handleTrashAdd = async (unusedProgName) => {
+    try {
+      const axiosInstance = axios.create({
+        baseURL,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const res = await axiosInstance.post(
+        `/${palette._id}/add-unused-program`,
+        { unusedProgName }
+      );
+
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleCategoryModalOpen = () => {
     setIsCategoryModalOpen(true);
   };
@@ -191,6 +211,14 @@ const Dashboard = () => {
 
   const handleCategoryDeleteModalClose = () => {
     setIsCategoryDeleteModalOpen(false);
+  };
+
+  const handleUnusedProgramsOpen = () => {
+    setIsUnusedProgramsOpen(true);
+  };
+
+  const handleUnusedProgramsClose = () => {
+    setIsUnusedProgramsOpen(false);
   };
 
   const handleAddModalOpen = () => {
@@ -261,12 +289,18 @@ const Dashboard = () => {
         handleCategoryDelete={handleCategoryDelete}
         categories={palette.categories}
       />
+      <AddUnusedProgramsModal
+        open={isUnusedProgramsOpen}
+        handleClose={handleUnusedProgramsClose}
+        handleAdd={handleTrashAdd}
+      />
       <div className="main-menu-btns">
         <button onClick={handleLogout}>Logout</button>
         <button onClick={handleEdit}>Edit</button>
         <button onClick={handleAddModalOpen}>Add file</button>
         <button onClick={handleCategoryModalOpen}>Create new category</button>
         <button onClick={handleCategoryDeleteModalOpen}>Delete category</button>
+        <button onClick={handleUnusedProgramsOpen}>Add trash</button>
       </div>
 
       <div className="rest">
