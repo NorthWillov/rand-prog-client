@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [isUnusedProgramsOpen, setIsUnusedProgramsOpen] = useState(false);
   const [isCategoryDeleteModalOpen, setIsCategoryDeleteModalOpen] =
     useState(false);
+  const [unusedPrograms, setUnusedPrograms] = useState([]);
   const [isModalXmlForm, setIsModalXmlForm] = useState(false);
   const [editInputs, setEditInputs] = useState({
     id: "",
@@ -44,6 +45,7 @@ const Dashboard = () => {
 
         if (res.data) {
           setPalette(res.data);
+          setUnusedPrograms(res.data.unusedProgs);
         }
       } catch (err) {
         console.log(err);
@@ -131,12 +133,16 @@ const Dashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      await axiosInstance.post(`/${palette._id}/insert-new-category`, {
-        newCategory,
-      });
+      const res = await axiosInstance.post(
+        `/${palette._id}/insert-new-category`,
+        {
+          newCategory,
+        }
+      );
+      console.log(res.data);
       setPalette({
         ...palette,
-        categories: [...palette.categories, newCategory],
+        categories: res.data.categories,
       });
     } catch (error) {
       console.log(error);
@@ -191,7 +197,21 @@ const Dashboard = () => {
         { unusedProgName }
       );
 
-      console.log(res);
+      setUnusedPrograms([...unusedPrograms, unusedProgName]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteTrashProgram = async (program) => {
+    try {
+      const res = await axios.delete(
+        `${baseURL}/${palette._id}/delete-unused-program`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { unusedProgName: program },
+        }
+      );
     } catch (error) {
       console.log(error);
     }
@@ -293,6 +313,9 @@ const Dashboard = () => {
         open={isUnusedProgramsOpen}
         handleClose={handleUnusedProgramsClose}
         handleAdd={handleTrashAdd}
+        unusedProgs={unusedPrograms}
+        setUnusedPrograms={setUnusedPrograms}
+        deleteTrashProgram={deleteTrashProgram}
       />
       <div className="main-menu-btns">
         <button onClick={handleLogout}>Logout</button>
@@ -304,7 +327,11 @@ const Dashboard = () => {
       </div>
 
       <div className="rest">
-        <XmlForm setPalette={setPalette} palette={palette} />
+        <XmlForm
+          setPalette={setPalette}
+          palette={palette}
+          unusedProgs={unusedPrograms}
+        />
         <button
           onClick={() => setIsModalXmlForm(!isAddModalOpen)}
           className="glow"

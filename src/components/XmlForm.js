@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import XMLParser from "react-xml-parser";
 import { DateTime } from "luxon";
 
-function XmlForm({ palette, setPalette }) {
+function XmlForm({ palette, setPalette, unusedProgs }) {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [filesCount, setFilesCount] = useState({});
@@ -43,9 +43,7 @@ function XmlForm({ palette, setPalette }) {
           }
           // Check if program is expired and it should not be on the playlist
           if (
-            palette.unusedProgs?.includes(
-              prog.children[1].value.toUpperCase()
-            ) &&
+            unusedProgs?.includes(prog.children[1].value.toUpperCase()) &&
             !passedOldProgs.includes(prog.children[1].value.toUpperCase())
           ) {
             passedOldProgs.push(prog.children[1].value.toUpperCase());

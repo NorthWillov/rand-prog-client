@@ -92,7 +92,7 @@ const AddProgModalForm = ({ open, handleClose, handleSubmit, categories }) => {
           </FormControl>
           <DialogActions>
             <Button style={{ marginRight: "20px" }} onClick={handleClose}>
-              Скасувати
+              Cancel
             </Button>
             <Button type="submit">Add</Button>
           </DialogActions>

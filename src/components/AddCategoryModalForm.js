@@ -26,10 +26,12 @@ const CategoryModal = ({ open, handleClose, handleSave }) => {
   };
 
   const handleConfirm = () => {
-    handleSave({ name: name.trim(), color });
-    setName("");
-    setColor("#000000");
-    handleClose();
+    if (name) {
+      handleSave({ name: name.trim(), color });
+      setName("");
+      setColor("#000000");
+      handleClose();
+    }
   };
 
   return (
@@ -43,6 +45,7 @@ const CategoryModal = ({ open, handleClose, handleSave }) => {
           fullWidth
           value={name}
           onChange={handleNameChange}
+          required
         />
         <ChromePicker color={color} onChange={handleColorChange} />
       </DialogContent>

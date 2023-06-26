@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, TextField } from "@mui/material";
 
-const AddUnusedProgramsModal = ({ open, handleClose, handleAdd }) => {
+const AddUnusedProgramsModal = ({
+  open,
+  handleClose,
+  handleAdd,
+  unusedProgs,
+  setUnusedPrograms,
+  deleteTrashProgram,
+}) => {
   const [programName, setProgramName] = useState("");
-  const [unusedPrograms, setUnusedPrograms] = useState([]);
+
+  useEffect(() => {
+    console.log(unusedProgs);
+  }, []);
 
   const handleProgramNameChange = (event) => {
     setProgramName(event.target.value);
@@ -21,8 +31,9 @@ const AddUnusedProgramsModal = ({ open, handleClose, handleAdd }) => {
 
   const handleDeleteProgram = (program) => {
     // Logic to handle deleting a program from the unused programs list
-    const updatedPrograms = unusedPrograms.filter((p) => p !== program);
+    const updatedPrograms = unusedProgs.filter((p) => p !== program);
     setUnusedPrograms(updatedPrograms);
+    deleteTrashProgram(program);
   };
 
   return (
@@ -50,10 +61,37 @@ const AddUnusedProgramsModal = ({ open, handleClose, handleAdd }) => {
             fullWidth
             margin="normal"
           />
-          {unusedPrograms.length > 0 && (
-            <ul style={{ marginTop: "1rem" }}>
-              {unusedPrograms.map((program) => (
-                <li key={program} style={{ marginBottom: "0.5rem" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "1rem",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddProgram}
+              style={{ marginRight: "1rem" }}
+              fullWidth
+            >
+              Add
+            </Button>
+            <Button fullWidth variant="contained" onClick={handleClose}>
+              Cancel
+            </Button>
+          </div>
+          {unusedProgs.length > 0 && (
+            <ul style={{ marginTop: "1rem", paddingLeft: "0" }}>
+              {unusedProgs.map((program) => (
+                <li
+                  key={program}
+                  style={{
+                    marginBottom: "0.5rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
                   {program}
                   <Button
                     variant="contained"
@@ -67,25 +105,6 @@ const AddUnusedProgramsModal = ({ open, handleClose, handleAdd }) => {
               ))}
             </ul>
           )}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "1rem",
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddProgram}
-              style={{ marginRight: "1rem" }}
-            >
-              Add
-            </Button>
-            <Button variant="contained" onClick={handleClose}>
-              Cancel
-            </Button>
-          </div>
         </div>
       </Modal>
     </div>
