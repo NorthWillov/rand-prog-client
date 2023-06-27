@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import AddProgModalForm from "./AddProgModalForm";
@@ -15,6 +16,7 @@ const cookies = new Cookies();
 
 const Dashboard = () => {
   const [palette, setPalette] = useState({ tvPrograms: [], categories: [] });
+  const [isLoading, setIsLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -36,12 +38,13 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsLoading(true);
     const getData = async () => {
       try {
         const res = await axios.get(`${baseURL}/fetch-palette`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("RES:", res);
+        setIsLoading(false);
 
         if (res.data) {
           setPalette(res.data);
@@ -49,6 +52,7 @@ const Dashboard = () => {
         }
       } catch (err) {
         console.log(err);
+        setIsLoading(false);
       }
     };
 
@@ -56,14 +60,17 @@ const Dashboard = () => {
   }, []);
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.post(`${baseURL}/logout`);
+      setIsLoading(false);
       if (response.data.success) {
         cookies.remove("TOKEN");
         navigate("/");
       }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -72,6 +79,7 @@ const Dashboard = () => {
   };
 
   const handleProgramDelete = async (prog) => {
+    setIsLoading(true);
     try {
       const res = await axios.delete(
         `${baseURL}/${palette._id}/programs/${prog._id}`,
@@ -79,10 +87,12 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      setIsLoading(false);
       const updatedProgs = palette.tvPrograms.filter((p) => p._id !== prog._id);
       setPalette({ ...palette, tvPrograms: updatedProgs });
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -98,6 +108,7 @@ const Dashboard = () => {
   };
 
   const handleProgramEditSubmit = async (updProg) => {
+    setIsLoading(true);
     try {
       const axiosInstance = axios.create({
         baseURL,
@@ -107,6 +118,7 @@ const Dashboard = () => {
       await axiosInstance.put(`/${palette._id}/edit/${updProg.id}`, {
         updProg,
       });
+      setIsLoading(false);
 
       const updTvProgs = palette.tvPrograms.map((p) => {
         if (p._id === updProg.id) {
@@ -123,10 +135,12 @@ const Dashboard = () => {
       setPalette({ ...palette, tvPrograms: updTvProgs });
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   const handleCategorySubmit = async (newCategory) => {
+    setIsLoading(true);
     try {
       const axiosInstance = axios.create({
         baseURL,
@@ -139,17 +153,20 @@ const Dashboard = () => {
           newCategory,
         }
       );
-      console.log(res.data);
+
+      setIsLoading(false);
       setPalette({
         ...palette,
         categories: res.data.categories,
       });
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   const handleInsert = async (newProg) => {
+    setIsLoading(true);
     try {
       const axiosInstance = axios.create({
         baseURL,
@@ -160,14 +177,17 @@ const Dashboard = () => {
         newProg,
       });
 
+      setIsLoading(false);
       setPalette(res.data);
       console.log(res);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   const handleCategoryDelete = async (categoryId) => {
+    setIsLoading(true);
     try {
       const axiosInstance = axios.create({
         baseURL,
@@ -178,14 +198,17 @@ const Dashboard = () => {
         `/${palette._id}/delete-category/${categoryId}`
       );
 
+      setIsLoading(false);
       setPalette(res.data);
       console.log(res);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   const handleTrashAdd = async (unusedProgName) => {
+    setIsLoading(true);
     try {
       const axiosInstance = axios.create({
         baseURL,
@@ -197,13 +220,16 @@ const Dashboard = () => {
         { unusedProgName }
       );
 
+      setIsLoading(false);
       setUnusedPrograms([...unusedPrograms, unusedProgName]);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   const deleteTrashProgram = async (program) => {
+    setIsLoading(true);
     try {
       const res = await axios.delete(
         `${baseURL}/${palette._id}/delete-unused-program`,
@@ -212,8 +238,10 @@ const Dashboard = () => {
           data: { unusedProgName: program },
         }
       );
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -263,6 +291,10 @@ const Dashboard = () => {
       info: "",
     });
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
