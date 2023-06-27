@@ -21,11 +21,14 @@ h2 {
 }
 
 .program {
-  width: 150px;
+  width: 170px;
   border-radius: 3px;
   margin: 1px;
-  height: 75px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   position: relative;
+  word-wrap: break-word;
 }
 
 h2 {
