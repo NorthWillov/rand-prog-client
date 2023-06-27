@@ -63,6 +63,38 @@ const AddUnusedProgramsModal = ({
           />
           <div
             style={{
+              maxHeight: "500px", // Adjust the maximum height as needed
+              overflowY: "auto",
+              marginTop: "1rem",
+            }}
+          >
+            {unusedProgs.length > 0 && (
+              <ul style={{ marginTop: "0", paddingLeft: "0" }}>
+                {unusedProgs.map((program) => (
+                  <li
+                    key={program}
+                    style={{
+                      marginBottom: "0.5rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {program}
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleDeleteProgram(program)}
+                      style={{ marginLeft: "0.5rem" }}
+                    >
+                      Delete
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div
+            style={{
               display: "flex",
               justifyContent: "flex-end",
               marginTop: "1rem",
@@ -81,30 +113,6 @@ const AddUnusedProgramsModal = ({
               Cancel
             </Button>
           </div>
-          {unusedProgs.length > 0 && (
-            <ul style={{ marginTop: "1rem", paddingLeft: "0" }}>
-              {unusedProgs.map((program) => (
-                <li
-                  key={program}
-                  style={{
-                    marginBottom: "0.5rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {program}
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleDeleteProgram(program)}
-                    style={{ marginLeft: "0.5rem" }}
-                  >
-                    Delete
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
       </Modal>
     </div>
