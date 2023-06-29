@@ -22,6 +22,7 @@ h2 {
 
 .program {
   width: 170px;
+  height: 85px;
   border-radius: 3px;
   margin: 1px;
   display: flex;
